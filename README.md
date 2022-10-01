@@ -2,4 +2,6 @@
 
 A userscript that adds a button to open a repo in vscode desktop using Remote Repositories and GitHub Repositories extensions
 
+![preview](preview.png)
+
 Partial idea/code from [GitHub in VSCode](https://github.com/Mottie/GitHub-userscripts/blob/master/github-in-vscode.user.js)

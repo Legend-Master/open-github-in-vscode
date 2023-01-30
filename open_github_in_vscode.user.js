@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        GitHub in VSCode desktop
 // @namespace   https://github.com/Legend-Master
-// @version     0.0.2
+// @version     0.0.3
 // @author      Tony
 // @description A userscript that adds a button to open a repo in VSCode desktop using Remote Repositories and GitHub Repositories extensions
 // @icon        https://github.githubassets.com/pinned-octocat.svg

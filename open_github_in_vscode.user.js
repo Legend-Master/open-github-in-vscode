@@ -13,17 +13,13 @@
 // @grant       none
 // ==/UserScript==
 
-(function() {
+;(function () {
 	'use strict'
 
 	const VSCODE_BUTTON_ID = 'github-in-vscode'
 
-	function addButton() {
+	function addButton(goToFile) {
 		if (document.getElementById(VSCODE_BUTTON_ID)) {
-			return
-		}
-		const goToFile = document.querySelector("a[data-hotkey='t']")
-		if (!goToFile) {
 			return
 		}
 
@@ -85,13 +81,32 @@
 		goToFile.before(link)
 	}
 
-	function init() {
-		const el = document.querySelector(
-			'include-fragment[data-test-selector="overview-actions-fragment"]'
-		)
-		el?.addEventListener('load', addButton)
-		addButton()
+	const goToFile = document.querySelector("a[data-hotkey='t']")
+	if (goToFile) {
+		addButton(goToFile)
+		return true
 	}
-	document.addEventListener('turbo:load', init)
-	init()
+
+	document.addEventListener('turbo:load', () => {
+		const goToFile = document.querySelector("a[data-hotkey='t']")
+		if (goToFile) {
+			addButton(goToFile)
+			return true
+		}
+
+		const observer = new MutationObserver((mutationList, observer) => {
+			for (const mutation of mutationList) {
+				for (const node of mutation.addedNodes) {
+					if (node instanceof HTMLAnchorElement && node.dataset.hotkey === 't') {
+						addButton(node)
+						observer.disconnect()
+					}
+				}
+			}
+		})
+		observer.observe(document.body, {
+			childList: true,
+			subtree: true,
+		})
+	})
 })()

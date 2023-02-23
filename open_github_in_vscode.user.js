@@ -76,29 +76,28 @@
 		const link = document.createElement('a')
 		link.id = VSCODE_BUTTON_ID
 		link.className = goToFile.className
+		link.ariaLabel = 'Open in VS Code'
 		link.href = `vscode://ms-vscode.remote-repositories/open?url=${window.location}`
-		link.innerHTML = `${vscodeLogo} Open in vscode`
+		link.innerHTML = `${vscodeLogo}`
 		goToFile.before(link)
 	}
 
-	const goToFile = document.querySelector("a[data-hotkey='t']")
-	if (goToFile) {
-		addButton(goToFile)
-		return true
+	function buttonAppend() {
+		const goToFile = document.querySelectorAll("a[data-hotkey='t'].btn")
+		console.log(goToFile)
+		// on last match add button
+		if (goToFile.length > 0) {
+			addButton(goToFile[goToFile.length - 1])
+		}
 	}
 
 	document.addEventListener('turbo:load', () => {
-		const goToFile = document.querySelector("a[data-hotkey='t']")
-		if (goToFile) {
-			addButton(goToFile)
-			return true
-		}
-
+		buttonAppend();
 		const observer = new MutationObserver((mutationList, observer) => {
 			for (const mutation of mutationList) {
 				for (const node of mutation.addedNodes) {
 					if (node instanceof HTMLAnchorElement && node.dataset.hotkey === 't') {
-						addButton(node)
+						buttonAppend();
 						observer.disconnect()
 					}
 				}
@@ -109,4 +108,8 @@
 			subtree: true,
 		})
 	})
+
+	// run buttonAppend after 100ms
+	setTimeout(buttonAppend, 100)
+
 })()

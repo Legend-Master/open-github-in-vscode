@@ -79,19 +79,39 @@
 		link.href = `vscode://ms-vscode.remote-repositories/open?url=${window.location}`
 		link.innerHTML = `${vscodeLogo} Open in vscode`
 		goToFile.before(link)
+
+		// Refined GitHub support
+		// They're using empty css animation and animationstart event to observe elements
+		// Event loop: here -> requestAnimationFrame -> animation -> animationstart event handler -> requestAnimationFrame
+		// So we need 2 requestAnimationFrame
+		function refinedGithub() {
+			if (goToFile.firstChild instanceof SVGElement) {
+				link.innerHTML = vscodeLogo
+				link.ariaLabel = 'Open in vscode'
+				link.className = goToFile.className
+				return true
+			}
+		}
+		refinedGithub() ||
+			requestAnimationFrame(() => {
+				requestAnimationFrame(() => {
+					refinedGithub()
+				})
+			})
 	}
 
-	const goToFile = document.querySelector("a[data-hotkey='t']")
+	// For initial page load
+	const goToFile = document.querySelector("a.btn[data-hotkey='t']")
 	if (goToFile) {
 		addButton(goToFile)
-		return true
 	}
 
+	// For soft page navigation (no browser reload, so this script won't rerun)
 	document.addEventListener('turbo:load', () => {
-		const goToFile = document.querySelector("a[data-hotkey='t']")
+		const goToFile = document.querySelector("a.btn[data-hotkey='t']")
 		if (goToFile) {
 			addButton(goToFile)
-			return true
+			return
 		}
 
 		const observer = new MutationObserver((mutationList, observer) => {

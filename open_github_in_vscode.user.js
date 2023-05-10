@@ -84,44 +84,47 @@
 		// They're using empty css animation and animationstart event to observe elements
 		// Event loop: here -> requestAnimationFrame -> animation -> animationstart event handler -> requestAnimationFrame
 		// So we need 2 requestAnimationFrame
-		function refinedGithub() {
-			if (goToFile.firstChild instanceof SVGElement) {
-				link.innerHTML = vscodeLogo
-				link.ariaLabel = 'Open in vscode'
-				link.className = goToFile.className
-				return true
-			}
-		}
-		refinedGithub() ||
-			requestAnimationFrame(() => {
-				requestAnimationFrame(() => {
-					refinedGithub()
-				})
-			})
+		// function refinedGithub() {
+		// 	if (goToFile.firstChild instanceof SVGElement) {
+		// 		link.innerHTML = vscodeLogo
+		// 		link.ariaLabel = 'Open in vscode'
+		// 		link.className = goToFile.className
+		// 		return true
+		// 	}
+		// }
+		// refinedGithub() ||
+		// 	requestAnimationFrame(() => {
+		// 		requestAnimationFrame(() => {
+		// 			refinedGithub()
+		// 		})
+		// 	})
 	}
 
-	// For initial page load
-	const goToFile = document.querySelector("a.btn[data-hotkey='t']")
-	if (goToFile) {
-		addButton(goToFile)
-	}
-
-	// For soft page navigation (no browser reload, so this script won't rerun)
-	document.addEventListener('turbo:load', () => {
+	function tryAddButton() {
 		const goToFile = document.querySelector("a.btn[data-hotkey='t']")
 		if (goToFile) {
 			addButton(goToFile)
+			return true
+		}
+		const firstActionButton = document.querySelector("#StickyHeader .d-flex.gap-2 [type='button']")
+		if (firstActionButton) {
+			addButton(firstActionButton)
+			return true
+		}
+	}
+
+	// For initial page load
+	tryAddButton()
+
+	// For soft page navigation (no browser reload, so this script won't rerun)
+	document.addEventListener('turbo:load', () => {
+		if (tryAddButton()) {
 			return
 		}
 
 		const observer = new MutationObserver((mutationList, observer) => {
-			for (const mutation of mutationList) {
-				for (const node of mutation.addedNodes) {
-					if (node instanceof HTMLAnchorElement && node.dataset.hotkey === 't') {
-						addButton(node)
-						observer.disconnect()
-					}
-				}
+			if (tryAddButton()) {
+				observer.disconnect()
 			}
 		})
 		observer.observe(document.body, {

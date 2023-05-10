@@ -107,7 +107,7 @@
 			addButton(goToFile)
 			return true
 		}
-		const firstActionButton = document.querySelector("#StickyHeader .d-flex.gap-2 [type='button']")
+		const firstActionButton = document.querySelector("#StickyHeader .d-flex.gap-2 button:not([hidden])")
 		if (firstActionButton) {
 			addButton(firstActionButton)
 			return true

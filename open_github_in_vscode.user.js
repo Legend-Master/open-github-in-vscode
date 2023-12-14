@@ -1,3 +1,4 @@
+// @ts-check
 // ==UserScript==
 // @name        GitHub in VSCode desktop
 // @namespace   https://github.com/Legend-Master
@@ -18,7 +19,11 @@
 
 	const VSCODE_BUTTON_ID = 'github-in-vscode'
 
-	function addButton(siblingElement) {
+	/**
+	 * @param {Element} siblingElement
+	 * @param {Element | undefined} copyStyleElement
+	 */
+	function addButton(siblingElement, copyStyleElement = undefined) {
 		if (document.getElementById(VSCODE_BUTTON_ID)) {
 			return
 		}
@@ -75,7 +80,8 @@
 
 		const link = document.createElement('a')
 		link.id = VSCODE_BUTTON_ID
-		link.className = siblingElement.className
+		// link.className = siblingElement.className
+		link.className = 'types__StyledButton-sc-ws60qy-0 crfMWv'
 		link.href = `vscode://ms-vscode.remote-repositories/open?url=${window.location}`
 		link.innerHTML = `${vscodeLogo} Open in vscode`
 		siblingElement.before(link)
@@ -86,7 +92,10 @@
 		// So we need 2 requestAnimationFrame
 		function refinedGithub() {
 			// More options is a button
-			if (siblingElement instanceof HTMLAnchorElement && siblingElement.firstChild instanceof SVGElement) {
+			if (
+				siblingElement instanceof HTMLAnchorElement &&
+				siblingElement.firstChild instanceof SVGElement
+			) {
 				link.innerHTML = vscodeLogo
 				link.ariaLabel = 'Open in vscode'
 				link.className = siblingElement.className
@@ -102,31 +111,47 @@
 	}
 
 	function tryAddButton() {
-		const goToFile = document.querySelector("a.btn[data-hotkey='t']")
-		if (goToFile) {
-			addButton(goToFile)
-			return true
+		// Repo main page
+		if (location.pathname.match('^/[^/]+/[^/]+$')) {
+			const goToFile = document.querySelector("button[data-hotkey='t,T']")
+			const container = goToFile?.parentElement?.parentElement
+			if (container) {
+				addButton(container)
+				return true
+			}
+			return
 		}
-		const firstActionButton = document.querySelector("#StickyHeader .d-flex.gap-2 button:not([hidden])")
-		if (firstActionButton) {
-			addButton(firstActionButton)
-			return true
-		}
+
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				const firstActionButton = document.querySelector(
+					'#StickyHeader div.d-flex.gap-2 button:not([hidden]):not([data-no-visuals])'
+				)
+				if (firstActionButton) {
+					addButton(firstActionButton)
+					return true
+				}
+			})
+		})
 	}
 
 	// For initial page load
 	tryAddButton()
 
+	/** @type {MutationObserver | undefined} */
+	let observer
 	// For soft page navigation (no browser reload, so this script won't rerun)
 	document.addEventListener('turbo:load', () => {
+		observer?.disconnect()
 		if (tryAddButton()) {
 			return
 		}
 
-		const observer = new MutationObserver((mutationList, observer) => {
-			if (tryAddButton()) {
-				observer.disconnect()
-			}
+		observer = new MutationObserver((mutationList, observer) => {
+			tryAddButton()
+			// if (tryAddButton()) {
+			// 	observer.disconnect()
+			// }
 		})
 		observer.observe(document.body, {
 			childList: true,

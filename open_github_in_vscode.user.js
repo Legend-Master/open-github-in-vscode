@@ -113,7 +113,7 @@
 	function tryAddButton() {
 		// Repo main page
 		if (location.pathname.match('^/[^/]+/[^/]+$')) {
-			const goToFile = document.querySelector("button[data-hotkey='t,T']")
+			const goToFile = document.querySelector("button[data-hotkey='t,Shift+T']")
 			const container = goToFile?.parentElement?.parentElement
 			if (container) {
 				addButton(container)

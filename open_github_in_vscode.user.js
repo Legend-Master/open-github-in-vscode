@@ -17,14 +17,15 @@
 ;(function () {
 	'use strict'
 
-	const VSCODE_BUTTON_ID = 'github-in-vscode'
+	/** @type {HTMLAnchorElement | undefined} */
+	let vscodeButton
 
 	/**
 	 * @param {Element} siblingElement
 	 * @param {Element | undefined} copyStyleElement
 	 */
 	function addButton(siblingElement, copyStyleElement = undefined) {
-		if (document.getElementById(VSCODE_BUTTON_ID)) {
+		if (vscodeButton?.isConnected) {
 			return
 		}
 
@@ -78,13 +79,12 @@
 		</svg>
 		`
 
-		const link = document.createElement('a')
-		link.id = VSCODE_BUTTON_ID
-		// link.className = siblingElement.className
-		link.className = 'types__StyledButton-sc-ws60qy-0 crfMWv'
-		link.href = `vscode://ms-vscode.remote-repositories/open?url=${window.location}`
-		link.innerHTML = `${vscodeLogo} Open in vscode`
-		siblingElement.before(link)
+		vscodeButton = document.createElement('a')
+		// vscodeButton.className = siblingElement.className
+		vscodeButton.className = 'types__StyledButton-sc-ws60qy-0 crfMWv'
+		vscodeButton.href = `vscode://ms-vscode.remote-repositories/open?url=${window.location}`
+		vscodeButton.innerHTML = `${vscodeLogo} Open in vscode`
+		siblingElement.before(vscodeButton)
 
 		// Refined GitHub support
 		// They're using empty css animation and animationstart event to observe elements
@@ -93,12 +93,13 @@
 		function refinedGithub() {
 			// More options is a button
 			if (
+				vscodeButton?.isConnected &&
 				siblingElement instanceof HTMLAnchorElement &&
 				siblingElement.firstChild instanceof SVGElement
 			) {
-				link.innerHTML = vscodeLogo
-				link.ariaLabel = 'Open in vscode'
-				link.className = siblingElement.className
+				vscodeButton.innerHTML = vscodeLogo
+				vscodeButton.ariaLabel = 'Open in vscode'
+				vscodeButton.className = siblingElement.className
 				return true
 			}
 		}
@@ -111,21 +112,18 @@
 	}
 
 	function tryAddButton() {
-		// Repo main page
-		if (location.pathname.match('^/[^/]+/[^/]+$')) {
-			const goToFile = document.querySelector("button[data-hotkey='t,Shift+T']")
-			const container = goToFile?.parentElement?.parentElement
-			if (container) {
-				addButton(container)
-				return true
-			}
-			return
+		const goToFile = document.querySelector("button[data-hotkey='t,Shift+T']")
+		const container = goToFile?.parentElement?.parentElement
+		// Not the one above repo file tree panel
+		if (container && container.id !== 'repos-file-tree') {
+			addButton(container)
+			return true
 		}
 
 		requestAnimationFrame(() => {
 			requestAnimationFrame(() => {
 				const firstActionButton = document.querySelector(
-					'#StickyHeader div.d-flex.gap-2 button:not([hidden]):not([data-no-visuals])'
+					'#StickyHeader div.d-flex.gap-2 button:not([hidden])'
 				)
 				if (firstActionButton) {
 					addButton(firstActionButton)

@@ -81,7 +81,7 @@
 
 		vscodeButton = document.createElement('a')
 		// vscodeButton.className = siblingElement.className
-		vscodeButton.className = 'types__StyledButton-sc-ws60qy-0 gyYLjU'
+		vscodeButton.className = 'types__StyledButton-sc-ws60qy-0 ftZGca'
 		vscodeButton.href = `vscode://ms-vscode.remote-repositories/open?url=${window.location}`
 		vscodeButton.innerHTML = `${vscodeLogo} Open in vscode`
 		siblingElement.before(vscodeButton)

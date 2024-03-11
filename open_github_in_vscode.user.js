@@ -113,7 +113,7 @@
 
 	function tryAddButton() {
 		const goToFile = document.querySelector("button[data-hotkey='t,Shift+T']")
-		const container = goToFile?.parentElement?.parentElement
+		const container = goToFile?.parentElement
 		// Not the one above repo file tree panel
 		if (container && container.id !== 'repos-file-tree') {
 			addButton(container)

@@ -22,9 +22,8 @@
 
 	/**
 	 * @param {Element} siblingElement
-	 * @param {Element | undefined} copyStyleElement
 	 */
-	function addButton(siblingElement, copyStyleElement = undefined) {
+	function addButton(siblingElement) {
 		if (vscodeButton?.isConnected) {
 			return
 		}
@@ -81,7 +80,7 @@
 
 		vscodeButton = document.createElement('a')
 		// vscodeButton.className = siblingElement.className
-		vscodeButton.className = 'types__StyledButton-sc-ws60qy-0 pyyxt'
+		vscodeButton.className = 'types__StyledButton-sc-ws60qy-0 gsAScr'
 		vscodeButton.href = `vscode://ms-vscode.remote-repositories/open?url=${window.location}`
 		vscodeButton.innerHTML = `${vscodeLogo} Open in vscode`
 		siblingElement.before(vscodeButton)

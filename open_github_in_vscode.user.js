@@ -2,7 +2,7 @@
 // ==UserScript==
 // @name        GitHub in VSCode desktop
 // @namespace   https://github.com/Legend-Master
-// @version     0.0.16
+// @version     0.0.17
 // @author      Tony
 // @description A userscript that adds a button to open a repo in VSCode desktop using Remote Repositories and GitHub Repositories extensions
 // @icon        https://github.githubassets.com/pinned-octocat.svg
@@ -80,7 +80,7 @@
 
 		vscodeButton = document.createElement('a')
 		// vscodeButton.className = siblingElement.className
-		vscodeButton.className = 'types__StyledButton-sc-ws60qy-0 cCCFnA'
+		vscodeButton.className = 'types__StyledButton-sc-ws60qy-0 gGdPyq'
 		vscodeButton.href = `vscode://ms-vscode.remote-repositories/open?url=${window.location}`
 		vscodeButton.innerHTML = `${vscodeLogo} Open in vscode`
 		siblingElement.before(vscodeButton)
